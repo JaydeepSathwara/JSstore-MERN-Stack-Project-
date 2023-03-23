@@ -5,16 +5,30 @@ const generateToken = require('../utils/GenerateJWT_Token');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require("crypto");
 const Product = require("../models/productModel");
+const cloudinary = require("cloudinary");
 
 exports.registerUser = catchError(async (req, res, next) => {
-  console.log("Hello2");
-  const { name, email, password } = req.body;
+
+  console.log("Avta hai bro");
+  const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    folder: 'avatars',
+    width: 150,
+    crop: 'scale'
+  })
+  
+  const { name, email, password,avatar } = req.body;
+
+  console.log("SignUp Name123: ", name);
+  console.log("SignUp Avatar123: ", email);
+  console.log("SignUp Email123: ", password);
+  console.log("Password123: ", avatar);
+
 
   const user = await User.create({
     name, email, password,
     avatar: {
-      public_id: "This is a sample id",
-      url: "profile_pic_url"
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url
     }
   })
   generateToken(user, 201, res);
@@ -23,10 +37,7 @@ exports.registerUser = catchError(async (req, res, next) => {
 // User Login
 
 exports.loginUser = catchError(async (req, res, next) => {
-  console.log("Hello1");
   const { email, password } = req.body;
-  console.log("Email2: ", email);
-  console.log("Password2: ", password);
   
   // Check if both email and password is entered by user
   if (!email || !password) {
