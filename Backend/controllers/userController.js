@@ -6,21 +6,18 @@ const sendEmail = require('../utils/sendEmail');
 const crypto = require("crypto");
 const Product = require("../models/productModel");
 const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
 
 exports.registerUser = catchError(async (req, res, next) => {
 
-  console.log("Avta hai bro");
-  const data = req.body;
   const { name, email, password,avatar } = req.body;
+  const file = fs.readFileSync("C:/Users/Admin/Desktop/background.pngJS Logo.png");
+  const myCloud = await cloudinary.uploader.upload(file, {
+    folder: 'avatars',
+    width: 150,
+    crop: 'scale'
+  }).catch(error => console.error(error));
 
-  console.log("Avta hai bro2", name);
-  // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-  //   folder: 'avatars',
-  //   width: 150,
-  //   crop: 'scale'
-  // })
-
-  const myCloud = cloudinary.uploader.upload(avatar, {public_id: "olympic_flag"});
 
   console.log("SignUp Name123: ", name);
   console.log("SignUp Avatar123: ", email);
@@ -30,10 +27,10 @@ exports.registerUser = catchError(async (req, res, next) => {
 
   const user = await User.create({
     name, email, password,
-    // avatar: {
-    //   public_id: myCloud.public_id,
-    //   url: myCloud.secure_url
-    // }
+    avatar: {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url
+    }
   })
   generateToken(user, 201, res);
 })
