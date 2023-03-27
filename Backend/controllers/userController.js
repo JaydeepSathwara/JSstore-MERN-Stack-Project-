@@ -9,17 +9,14 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 exports.registerUser = catchError(async (req, res, next) => {
-  console.log("asdasd1");
 
   const { name, email, password,avatar } = req.body;
   const userCheck = await User.findOne({ email });
   if (userCheck) {
-    console.log("Email used hai bhai sahb!!!");
     return next(new ErrorHandler("Email Is Already In Use", 401));
   }
 
   // const file = fs.readFileSync("C:/Users/Admin/Desktop/login background.jpg");
-    console.log("asdasd2");
     // const myCloud = await cloudinary.uploader.upload("C:/Users/Admin/Desktop/login background.jpg", {
     //   folder: "Avatars",
     //   width: 150,
