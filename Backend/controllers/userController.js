@@ -9,27 +9,37 @@ const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 exports.registerUser = catchError(async (req, res, next) => {
+  console.log("asdasd1");
 
   const { name, email, password,avatar } = req.body;
-  const file = fs.readFileSync("C:/Users/Admin/Desktop/background.pngJS Logo.png");
-  const myCloud = await cloudinary.uploader.upload(file, {
-    folder: 'avatars',
-    width: 150,
-    crop: 'scale'
-  }).catch(error => console.error(error));
+  const userCheck = await User.findOne({ email });
+  if (userCheck) {
+    console.log("Email used hai bhai sahb!!!");
+    return next(new ErrorHandler("Email Is Already In Use", 401));
+  }
+
+  // const file = fs.readFileSync("C:/Users/Admin/Desktop/login background.jpg");
+    console.log("asdasd2");
+    // const myCloud = await cloudinary.uploader.upload("C:/Users/Admin/Desktop/login background.jpg", {
+    //   folder: "Avatars",
+    //   width: 150,
+    //   crop: "scale",
+    // });
+    const myCloud = {url : "Temp url hai bro"};
+  console.log("url",myCloud.url);
 
 
-  console.log("SignUp Name123: ", name);
-  console.log("SignUp Avatar123: ", email);
-  console.log("SignUp Email123: ", password);
-  console.log("Password123: ", avatar);
+  // console.log("SignUp Name123: ", name);
+  // console.log("SignUp Avatar123: ", email);
+  // console.log("SignUp Email123: ", password);
+  // console.log("Password123: ", avatar);
 
 
   const user = await User.create({
     name, email, password,
     avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url
+      public_id: "myCloud.public_id",
+      url: "myCloud.secure_url"
     }
   })
   generateToken(user, 201, res);
